@@ -1,0 +1,63 @@
+#!/bin/sh
+
+function check_for_linter() {
+  LINTER=$1
+  # Check for linter in env
+  which $LINTER &> /dev/null
+  if [[ "$?" == 1 ]]; then
+    echo "\t\033[41mLinter Missing - $LINTER\033[0m"
+    exit 1
+  fi
+}
+
+function get_staged_files() {
+  FILE_EXT=$1
+  echo $(git diff --cached --name-only --diff-filter=ACM | grep $FILE_EXT"x\{0,1\}$")
+}
+
+function validate_linting() {
+  FILE_TYPE=$1
+  LINTER=$2
+  STAGED_FILES=$3
+  echo "\nLinting $FILE_TYPE:\n"
+
+  for FILE in $STAGED_FILES
+  do
+    $LINTER "$FILE"
+
+    if [[ "$?" == 0 ]]; then
+      echo "\t\033[32m$Passed: $FILE\033[0m"
+    else
+      echo "\t\033[41m$Failed: $FILE\033[0m"
+      PASS=false
+    fi
+  done
+}
+
+check_for_linter "eslint"
+check_for_linter "tslint"
+
+STAGED_FILES_JS=$(get_staged_files ".js")
+STAGED_FILES_TS=$(get_staged_files ".ts")
+
+PASS=true
+
+if [[ "$STAGED_FILES_JS" != "" ]]; then
+  validate_linting "Javascript" "eslint" $STAGED_FILES_JS
+fi
+
+if ! $PASS; then
+  echo "\033[41mCOMMIT FAILED:\033[0m Failed linting $LINTER Try again after fixing errors.\n"
+  exit 1
+fi
+
+if [[ "$STAGED_FILES_TS" != "" ]]; then
+  validate_linting "Typescript" "tslint" $STAGED_FILES_TS
+fi
+
+if ! $PASS; then
+  echo "\033[41mCOMMIT FAILED:\033[0m Failed linting $LINTER Try again after fixing errors.\n"
+  exit 1
+fi
+
+exit $?
