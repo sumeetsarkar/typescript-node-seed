@@ -7,3 +7,7 @@ Build
 Run
 
     $ npm run serve
+
+Test
+
+    $ npm run test
