@@ -1,8 +1,10 @@
 import { Router } from 'express';
 
-import { WRAP } from '../utils/utils';
-import { getEcho } from './controller';
+import { requestWrapper } from '../utils/utils';
+import { getIndex, getTwice } from './controller';
 
 export const router = Router();
 
-router.get('/', WRAP(getEcho));
+router.get('/', requestWrapper(getIndex));
+
+router.get('/twice', requestWrapper(getTwice));

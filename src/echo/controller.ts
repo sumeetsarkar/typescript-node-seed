@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { RESPONSE_HELPER } from '../utils/utils';
+import { responsePromise } from '../utils/utils';
 
-export const getEcho = function (req: Request, res: Response, next: NextFunction) {
-  // return res.status(200).send({ ...req.query });
-  return RESPONSE_HELPER(res)({ response: { ...req.query }, statusCode: 200 });
-};
+export function getIndex(req: Request, res: Response, next: NextFunction) {
+  return res.status(200).send({ ...req.query });
+}
+
+export function getTwice(req: Request, res: Response, next: NextFunction) {
+  return responsePromise(res)({ response: { ...req.query }, statusCode: 200 });
+}

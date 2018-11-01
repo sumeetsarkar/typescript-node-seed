@@ -12,7 +12,7 @@ import { CONSTANTS } from './utils/constants';
 
 // Setup Logger
 if (process.env.NODE_ENV !== 'production') {
-  logger.info('Logging initialized at info level', CONSTANTS.appName);
+  logger.info(`Logger setup... ${CONSTANTS.appName}`);
 }
 
 // Initialize express instance

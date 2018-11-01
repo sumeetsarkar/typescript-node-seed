@@ -23,19 +23,22 @@ export function defineConstant(
   });
 }
 
-export const WRAP = (fn: any) =>
-  (...args: any[]) =>
-    fn(...args).catch(args[2]);
+export const requestWrapper = (fn: any) =>
+  (...args: any[]) => {
+    const p = fn(...args);
+    if (`${p}` === '[object Promise]') {
+      return p.then().catch(args[2]);
+    }
+    return p;
+  };
 
-interface ResponseBody {
-  body: object;
-  statusCode: number;
-}
-
-export const RESPONSE_HELPER = (res: Response) =>
-  ({ statusCode, response = {} }: { statusCode: number, response?: object }) => new Promise(() => {
-    res.set({ 'content-type': 'application/json' })
-      .status(statusCode)
-      .send(response);
-  }
+export const responsePromise = (res: Response) =>
+  ({ statusCode, response = {} }: { statusCode: number, response?: object }) =>
+    new Promise((resolve) => {
+      resolve(
+        res.set({ 'content-type': 'application/json' })
+          .status(statusCode)
+          .send(response)
+      );
+    }
 );

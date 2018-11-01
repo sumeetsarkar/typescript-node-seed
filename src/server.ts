@@ -4,6 +4,10 @@ import cluster from 'cluster';
 import app from './app';
 import logger from './utils/logger';
 
+// ServerInfo decorator method
+const addServerInfo = (serverInfo: ServerInfo, fn: (...args:any[]) => void) =>
+      (...args:any[]) => fn(serverInfo, ...args);
+
 // start point
 boot();
 
@@ -25,10 +29,12 @@ function boot() {
 
 function startServer() {
   // Create HTTP server.
+  logger.info('Starting server...');
   const server = http.createServer(app);
   const port = app.get('port');
   const serverInfo = { server, port };
   // Setup event handlers
+  logger.info('Setting up server event handlers...');
   server.on('error', addServerInfo(serverInfo, onError));
   server.on('listening', addServerInfo(serverInfo, onListening));
   // Listen on provided port, on all network interfaces.
@@ -89,16 +95,10 @@ function onListening(serverInfo: ServerInfo) {
   const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  logger.info(`Listening on ${bind}`);
+  logger.info(`Server listening on ${bind}`);
 }
 
 interface ServerInfo {
   server: http.Server;
   port: number;
-}
-
-function addServerInfo(serverInfo: ServerInfo, fn: (...args:any[]) => void) {
-  return function (...args:any[]) {
-    fn(serverInfo, ...args);
-  };
 }
