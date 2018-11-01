@@ -4,7 +4,7 @@ import cluster from 'cluster';
 import app from './app';
 import logger from './utils/logger';
 
-// start
+// start point
 boot();
 
 function boot() {
@@ -26,13 +26,13 @@ function boot() {
 function startServer() {
   // Create HTTP server.
   const server = http.createServer(app);
-
-  // Listen on provided port, on all network interfaces.
   const port = app.get('port');
-  server.listen(port);
   const serverInfo = { server, port };
+  // Setup event handlers
   server.on('error', addServerInfo(serverInfo, onError));
   server.on('listening', addServerInfo(serverInfo, onListening));
+  // Listen on provided port, on all network interfaces.
+  server.listen(port);
 }
 
 function onClusterOnline(worker: cluster.Worker) {
@@ -58,7 +58,6 @@ function onClusterExit(deadWorker: cluster.Worker, code: number, signal: string)
 /**
  * Event listener for HTTP server 'error' event.
  */
-
 function onError(serverInfo: ServerInfo, error: any) {
   if (error.syscall !== 'listen') {
     throw error;

@@ -6,7 +6,7 @@ import momentTimezone from 'moment-timezone';
 export const LOG_FILE_OUT = 'stdout.log';
 export const LOG_FILE_ERR = 'stderr.log';
 
-const { combine, timestamp, label, prettyPrint, colorize, printf } = format;
+const { combine, label, prettyPrint, colorize, printf } = format;
 const { Console, File } = transports;
 
 // Formatting ----------------------------------------------------------
