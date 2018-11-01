@@ -6,5 +6,12 @@ export function getIndex(req: Request, res: Response, next: NextFunction) {
 }
 
 export function getTwice(req: Request, res: Response, next: NextFunction) {
-  return responsePromise(res)({ response: { ...req.query }, statusCode: 200 });
+  const data = Object.keys(req.query)
+    .reduce(
+      (acc: any, k, i) => {
+        acc[k] = req.query[k] + req.query[k];
+        return acc;
+      },
+      {});
+  return responsePromise(res)({ response: data, statusCode: 200 });
 }

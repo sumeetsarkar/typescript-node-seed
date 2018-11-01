@@ -60,4 +60,6 @@ if ! $PASS; then
   exit 1
 fi
 
+npm run test
+
 exit $?
