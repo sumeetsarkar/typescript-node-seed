@@ -40,5 +40,4 @@ export const responsePromise = (res: Response) =>
           .status(statusCode)
           .send(response)
       );
-    }
-);
+    });
