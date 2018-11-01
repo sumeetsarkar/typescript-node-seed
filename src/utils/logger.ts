@@ -3,6 +3,9 @@ import { transports, format } from 'winston';
 import winstonDailyRotateFile from 'winston-daily-rotate-file';
 import momentTimezone from 'moment-timezone';
 
+export const LOG_FILE_OUT = 'stdout.log';
+export const LOG_FILE_ERR = 'stderr.log';
+
 const { combine, timestamp, label, prettyPrint, colorize, printf } = format;
 const { Console, File } = transports;
 
@@ -37,13 +40,13 @@ const transportConsole = new Console({
 });
 
 const transportFileStdout = new File({
-  filename: 'stdout.log',
+  filename: LOG_FILE_OUT,
   tailable: true,
   handleExceptions: true,
 });
 
 const transportFileStderr = new File({
-  filename: 'stderr.log',
+  filename: LOG_FILE_ERR,
   level: 'error',
   tailable: true,
   handleExceptions: true,
@@ -59,6 +62,10 @@ const transportDailyRotateFile = new winstonDailyRotateFile({
   dirname: 'logs',
 });
 
+transportDailyRotateFile.on('rotate', (oldFilename, newFilename) => {
+  // notify log rotation
+});
+
 // Intialize Logger ---------------------------------------------
 const logger = winston.createLogger({
   format: formatOptions,
@@ -70,8 +77,10 @@ const logger = winston.createLogger({
   ],
 });
 
-transportDailyRotateFile.on('rotate', (oldFilename, newFilename) => {
-  // notify log rotation
-});
+export const loggerStream = {
+  write: (message: string) => {
+    logger.info(message);
+  },
+};
 
 export default logger;
