@@ -11,3 +11,11 @@ Run
 Test
 
     $ npm run test
+
+Docker Build
+
+    # docker build .
+
+Docker Run
+
+    # docker run -p 3000:3000 <image-id>
